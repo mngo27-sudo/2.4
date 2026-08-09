@@ -30,7 +30,7 @@ module top_60 #(parameter CLK_DIV_INT=10) (
     )
     clk_divider (
         .clk(clk),
-        .pause(pause)
+        .pause(pause),
         .rco_enable(enable)
     );
         
@@ -44,7 +44,7 @@ module top_60 #(parameter CLK_DIV_INT=10) (
     //       Generate "low_digit" and "high_digit".
     //<YOUR CODE HERE>
 
-    timer_60 (
+    timer_60 timer(
         .clk(clk),
         .enable(enable),
         .low_digit(low_digit),
@@ -65,11 +65,34 @@ module top_60 #(parameter CLK_DIV_INT=10) (
     //          Set data_in as the input signal vector "digits" from part (a).
     //          Set sel_ctrl as this module's clk input signal.
     //          Generate "muxed_digits".
-    <YOUR CODE HERE>
+    //<YOUR CODE HERE>
+    wire [7:0] digits = {1'b0, high_digit, low_digit};
+    wire [1:0] data_en;
+
+    data_plexer_en # (
+        INPUT_WIDTH(4),
+        .SEL(1)
+    ) mux_en
+    (
+        .data_in(digits),
+        .sel_ctrl(clk),
+        .data_out(muxed_digits),
+        .data_en(data_en)
+    );
 
 
     //Part 7: Generate 2 enable signals, called "en_high_digit" and "en_low_digit" for the multiplexed output 
     //        (muxed_digits) which is logic 1 when the active digit is output on the muxed_digits signal.  
-    <YOUR CODE HERE>
+    //<YOUR CODE HERE>
+
+    always @(*) begin
+        if (clk == 1'b0) begin
+            low_digit_en  = 1'b1;
+            high_digit_en = 1'b0;
+        end else begin
+            low_digit_en  = 1'b0;
+            high_digit_en = 1'b1;
+        end
+    end
 
 endmodule
